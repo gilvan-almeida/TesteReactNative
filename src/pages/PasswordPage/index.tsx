@@ -17,7 +17,7 @@ export function PasswordPage({onLogin, navigation}: PasswordProps){
         <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
             <Text>Digite seu PIN</Text>
 
-            <PinInput pin={passwordPin} onChangePin={verifyHandleDigit} />
+            <PinInput pin={passwordPin} onChangePin={verifyHandleDigit  } />
 
             {error && <Text style={{ color: "red" }}>PIN incorreto!</Text>}
 
