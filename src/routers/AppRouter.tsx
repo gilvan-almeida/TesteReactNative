@@ -4,6 +4,7 @@ import { HomePage } from "../pages/HomePage";
 import { FavoritasPage } from "../pages/FavoritePage";
 import { AppProvider } from "../context/TaskContext";
 import { CreateTaskPage } from "../pages/CreateTaskPage";
+import { LabelsPage } from "../pages/LabelPage";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -12,7 +13,8 @@ function TabNavigation(){
     return(
         <Tab.Navigator>
             <Tab.Screen name="Home" component={HomePage}/>
-            <Tab.Screen name="favoritos" component={FavoritasPage}/>
+            <Tab.Screen name="Favoritos" component={FavoritasPage}/>
+            <Tab.Screen name="LabelPage" component={LabelsPage}/>
         </Tab.Navigator>
     )
 }
