@@ -4,4 +4,4 @@ export interface LabelType{
     color: string;
 }
 
-export type createdLabel = Omit<LabelType, "id">
+export type CreatedLabel = Omit<LabelType, "id">
