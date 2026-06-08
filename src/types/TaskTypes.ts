@@ -1,6 +1,6 @@
 export interface TaskType{
     id: string;
-    nama: string;
+    name: string;
     description?: string;
     labelId: string | null;
     favorite: boolean;
@@ -10,8 +10,8 @@ export interface TaskType{
     createdAd: string;
 }
 
-export type createdTask = Omit<TaskType, "id"| "createdAd">
+export type CreatedTask = Omit<TaskType, "id"| "createdAd">
 
-export type orderTaskType = "date" | "createdAd" | "alphabetical";
+export type OrderTaskType = "date" | "createdAd" | "alphabetical";
 
 export type FilterType = "all" | "today" | "favorites" | "completed" | "label";
