@@ -1,5 +1,6 @@
 import styled from "styled-components/native";
 import { Platform, StatusBar } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export const Container = styled.View`
   flex: 1;
@@ -12,7 +13,7 @@ export const HeaderContainer = styled.View`
   margin-bottom: ${({ theme }) => theme.spacing.lg};
 `;
 
-export const GreetingText = styled.Text`
+export const TitleText = styled.Text`
   font-size: ${({ theme }) => theme.fontSize.xxl};
   font-weight: bold;
   color: ${({ theme }) => theme.colors.text};
@@ -25,9 +26,8 @@ export const SubtitleText = styled.Text`
 `;
 
 export const ToolbarContainer = styled.View`
-    padding-horizontal: ${({ theme }) => theme.spacing.lg};
-    margin-bottom: ${({ theme }) => theme.spacing.md};
-    gap: ${({ theme }) => theme.spacing.sm};
+  padding-horizontal: ${({ theme }) => theme.spacing.lg};
+  margin-bottom: ${({ theme }) => theme.spacing.md};
 `;
 
 export const FilterRow = styled.View`
@@ -46,21 +46,4 @@ export const EmptyText = styled.Text`
   color: ${({ theme }) => theme.colors.textLight};
   text-align: center;
   margin-top: ${({ theme }) => theme.spacing.xl};
-`;
-
-export const FloatingActionButton = styled.TouchableOpacity`
-  position: absolute;
-  bottom: 32px;
-  right: 24px;
-  width: 56px;
-  height: 56px;
-  border-radius: ${({ theme }) => theme.borderRadius.full};
-  background-color: ${({ theme }) => theme.colors.primary};
-  justify-content: center;
-  align-items: center;
-  elevation: 5;
-  shadow-color: ${({ theme }) => theme.colors.primary};
-  shadow-offset: 0px 4px;
-  shadow-opacity: 0.3;
-  shadow-radius: 4.65px;
 `;

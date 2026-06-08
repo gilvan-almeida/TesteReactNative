@@ -66,14 +66,14 @@ export function HomePage({ navigation }: HomePageProps) {
 
             <ListContainer>
                 <FlatList
-                    data={filteredBySearch} // ← usa o filtrado por search
+                    data={filteredBySearch}
                     keyExtractor={(item) => item.id}
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ paddingBottom: 100 }}
                     renderItem={({ item }: { item: TaskType }) => (
                         <TaskCard
                             task={item}
-                            onPress={() => navigation.navigate("EditTask", { task: item })} // ← EditTask não CreateTask!
+                            onPress={() => navigation.navigate("EditTask", { task: item })} 
                         />
                     )}
                     ListEmptyComponent={

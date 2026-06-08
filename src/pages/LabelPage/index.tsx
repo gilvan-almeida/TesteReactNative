@@ -1,93 +1,76 @@
+import React from "react";
+import { FlatList } from "react-native";
+import { useTheme } from "styled-components/native";
+import { Plus } from "lucide-react-native";
+import { useLabelContext, useTaskContext } from "../../context/TaskContext";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { AppStackParamList } from "../../types/NavigationType";
 
-import { useState } from "react";
-import { View, Text, FlatList, Button, TextInput } from "react-native";
-import { useLabelContext } from "../../context/TaskContext";
-import { useTaskContext } from "../../context/TaskContext";
+import {
+  Container,
+  HeaderContainer,
+  TitleText,
+  ListContainer,
+  LabelCard,
+  ColorCircle,
+  LabelInfo,
+  LabelName,
+  TaskCount,
+  EditButton,
+  EditButtonText,
+  FloatingActionButton,
+  EmptyText,
+  SubtitleText
+} from "./style";
 
-export function LabelsPage() {
-    const { labels, createLabel, updateLabel, deleteLabel } = useLabelContext();
-    const { tasks, clearLabelTask } = useTaskContext();
+type LabelsPageProps = {
+  navigation: NativeStackNavigationProp<AppStackParamList>;
+};
 
-    const [newLabelName, setNewLabelName] = useState("");
-    const [newLabelColor, setNewLabelColor] = useState("#FF0000");
-    const [editingId, setEditingId] = useState<string | null>(null);
-    const [editingName, setEditingName] = useState("");
+export function LabelsPage({ navigation }: LabelsPageProps) {
+  const theme = useTheme();
+  const { labels } = useLabelContext(); 
+  const { tasks } = useTaskContext();   
 
-    const handleCreate = async () => {
-        if (!newLabelName.trim()) return;
-        await createLabel({ name: newLabelName, color: newLabelColor });
-        setNewLabelName("");
-    };
+  return (
+    <Container>
+      <HeaderContainer>
+        <TitleText>Categorias</TitleText>
+        <SubtitleText>
+            Edite e crie sua categoria
+        </SubtitleText>
+      </HeaderContainer>
 
-    const handleUpdate = async (id: string) => {
-        if (!editingName.trim()) return;
-        await updateLabel(id, { name: editingName });
-        setEditingId(null);
-        setEditingName("");
-    };
+      <ListContainer>
+        <FlatList
+          data={labels}
+          keyExtractor={(item) => item.id}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 100 }}
+          renderItem={({ item }) => {
+            const count = tasks.filter((t) => t.labelId === item.id).length;
 
-    const handleDelete = async (id: string) => {
-        await deleteLabel(id);
-        await clearLabelTask(id); 
-    };
+            return (
+              <LabelCard>
+                <ColorCircle color={item.color} />
+                <LabelInfo>
+                  <LabelName>{item.name}</LabelName>
+                  <TaskCount>{count} {count === 1 ? "task" : "tasks"}</TaskCount>
+                </LabelInfo>
 
-    return (
-        <View style={{ flex: 1, padding: 16 }}>
-            <Text>Labels</Text>
+                <EditButton onPress={() => navigation.navigate("CreateLabel", { label: item })}>
+                  <EditButtonText>Edit</EditButtonText>
+                </EditButton>
+              </LabelCard>
+            );
+          }}
+          ListEmptyComponent={<EmptyText>Nenhuma label cadastrada!</EmptyText>}
+        />
+      </ListContainer>
 
-            <TextInput
-                value={newLabelName}
-                onChangeText={setNewLabelName}
-                placeholder="Nome da label"
-            />
-            <TextInput
-                value={newLabelColor}
-                onChangeText={setNewLabelColor}
-                placeholder="Cor (ex: #FF0000)"
-            />
-            <Button title="+ Criar Label" onPress={handleCreate} />
-
-            <FlatList
-                data={labels}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                    <View style={{ padding: 8, borderBottomWidth: 1 }}>
-
-                        {editingId === item.id ? (
-                            <>
-                                <TextInput
-                                    value={editingName}
-                                    onChangeText={setEditingName}
-                                    placeholder="Novo nome"
-                                />
-                                <Button title="Salvar" onPress={() => handleUpdate(item.id)} />
-                                <Button title="Cancelar" onPress={() => setEditingId(null)} />
-                            </>
-                        ) : (
-                            <>
-                                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                    <View style={{
-                                        width: 16,
-                                        height: 16,
-                                        borderRadius: 8,
-                                        backgroundColor: item.color,
-                                        marginRight: 8
-                                    }} />
-                                    <Text>{item.name}</Text>
-                                    <Text> ({tasks.filter(t => t.labelId === item.id).length})</Text>
-                                </View>
-
-                                <Button title="Editar" onPress={() => {
-                                    setEditingId(item.id);
-                                    setEditingName(item.name);
-                                }} />
-                                <Button title="Deletar" onPress={() => handleDelete(item.id)} />
-                            </>
-                        )}
-                    </View>
-                )}
-                ListEmptyComponent={<Text>Nenhuma label!</Text>}
-            />
-        </View>
-    );
+      <FloatingActionButton onPress={() => navigation.navigate("CreateLabel", {})}>
+        <Plus size={24} color={theme.colors.white} />
+      </FloatingActionButton>
+    </Container>
+  );
 }
