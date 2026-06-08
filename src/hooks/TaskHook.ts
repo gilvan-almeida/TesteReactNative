@@ -100,7 +100,7 @@ export function useTask(){
     const filterLabel = useCallback((labelId: string) => {
         setSelectLabel(labelId);
         setFilter("label");
-    },[])
+    },[setSelectLabel, setFilter])
 
     const filteredTasks = useCallback(() => {
         const dateDay = new Date().toISOString().split("T")[0];
@@ -137,7 +137,7 @@ export function useTask(){
         }
 
         return result
-    },[tasks, filter, order])
+    },[tasks, filter, order, selectLabel])
     
     return { tasks: filteredTasks(), createTask, updateTask, deleteTask, completedTask, favoritedTask, moveLabelTask, clearLabelTask, filter, setFilter, order, setOrder, filterLabel, selectLabel }
 

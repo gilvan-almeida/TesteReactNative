@@ -1,5 +1,6 @@
 import { LabelType } from "../types/LabelTypes";
 import { randomUUID } from "expo-crypto";
+import { FilterType } from "../types/TaskTypes";
 
 export const DEFAULT_LABEL: LabelType[] = [
     {
@@ -17,3 +18,10 @@ export const DEFAULT_LABEL: LabelType[] = [
     },
 
 ]
+
+export const FIXED_FILTERS: { label: string; value: FilterType }[] = [
+    { label: "Todas", value: "all" },
+    { label: "Hoje", value: "today" },
+    { label: "Favoritas", value: "favorites" },
+    { label: "Concluídas", value: "completed" },
+];

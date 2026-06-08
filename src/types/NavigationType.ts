@@ -10,3 +10,9 @@ export type AppStackParamList = {
     CreateTask: { task?: TaskType };
     EditTask: { task: TaskType };
 };
+
+export type AppTabParamList = {
+    Home: undefined;
+    Favoritos: undefined;
+    LabelPage: undefined;
+};
