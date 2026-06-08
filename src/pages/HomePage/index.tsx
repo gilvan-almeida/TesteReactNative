@@ -2,7 +2,7 @@
 import { View, Text, FlatList, Button } from "react-native";
 import { useTaskContext } from "../../context/TaskContext";
 import { useLabelContext } from "../../context/TaskContext";
-import { TaskCard } from "../../components/TaskCard";
+import { TaskCard } from "../../components/TaskCard/TaskCard";
 import { TaskType } from "../../types/TaskTypes";
 
 export function HomePage({ navigation }: any) {
@@ -20,12 +20,12 @@ export function HomePage({ navigation }: any) {
                 data={tasks}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }: { item: TaskType }) => (
-                    <TaskCard task={item} />
+                    <TaskCard task={item} onPress={() => navigation.navigate("CreateTask", { task: item })}/>
                 )}
                 ListEmptyComponent={
                     <Text>Nenhuma tarefa ainda!</Text>
                 }
             />
         </View>
-    );
+    );                                                                          
 }

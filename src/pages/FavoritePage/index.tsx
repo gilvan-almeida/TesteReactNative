@@ -1,6 +1,6 @@
 import { View, Text, FlatList } from "react-native";
 import { useTaskContext } from "../../context/TaskContext";
-import { TaskCard } from "../../components/TaskCard";
+import { TaskCard } from "../../components/TaskCard/TaskCard";
 
 export function FavoritasPage() {
     const { tasks } = useTaskContext();

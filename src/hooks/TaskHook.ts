@@ -41,15 +41,13 @@ export function useTask(){
     },[tasks]);
 
     const deleteTask = useCallback(async (id: string) =>{
-        const verifyTask = tasks.filter((task) =>{
-            task.id !== id
-        });
+        const verifyTask = tasks.filter((task) => task.id !== id);
         setTask(verifyTask);
         await TaskService.setTask(verifyTask);
     },[tasks]);
 
     const completedTask = useCallback(async (id: string) => {
-        const verifyTask = tasks.filter((task) =>{
+        const verifyTask = tasks.map((task) =>{
             if(task.id === id){
                 return {...task, completed: !task.completed}
             }else{
@@ -106,8 +104,6 @@ export function useTask(){
 
     const filteredTasks = useCallback(() => {
         const dateDay = new Date().toISOString().split("T")[0];
-        //remover
-        console.log(dateDay);
 
         let result = [...tasks];
 

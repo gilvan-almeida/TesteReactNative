@@ -5,9 +5,10 @@ import { FavoritasPage } from "../pages/FavoritePage";
 import { AppProvider } from "../context/TaskContext";
 import { CreateTaskPage } from "../pages/CreateTaskPage";
 import { LabelsPage } from "../pages/LabelPage";
+import { AppStackParamList } from "../types/NavigationType";
 
 const Tab = createBottomTabNavigator();
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<AppStackParamList>();
 
 function TabNavigation(){
     return(
@@ -25,6 +26,7 @@ export function AppRouter(){
             <Stack.Navigator screenOptions={{headerShown: false}}>
                 <Stack.Screen name="Tab" component={TabNavigation}/>
                 <Stack.Screen name="CreateTask" component={CreateTaskPage}/>
+                <Stack.Screen name="EditTask" component={CreateTaskPage} />
             </Stack.Navigator>
         </AppProvider>
     )

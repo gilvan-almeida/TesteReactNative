@@ -1,87 +1,142 @@
-import { useState } from "react";
-import { View, Text, TextInput, Button } from "react-native";
-import { useTaskContext } from "../../context/TaskContext";
-import { useLabelContext } from "../../context/TaskContext";
+import React, { useState } from "react";
+import { KeyboardAvoidingView, Platform } from "react-native";
+import { X, Calendar, Tag } from "lucide-react-native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useTaskContext, useLabelContext } from "../../context/TaskContext";
+import { TaskType } from "../../types/TaskTypes";
+import { AppStackParamList } from "../../types/NavigationType";
+import { DateRangePicker } from "../../components/DateCard";
+import { Container, ScrollContainer, HeaderRow, Title, CloseButton, ErrorText, FormGroup, InputLabel, RequiredMark, StyledInput, TextArea, InputWithIcon, IconWrapper, InputField, LabelScroll, LabelChip, LabelChipText, SubmitButton, SubmitButtonText } from "./style";
 
-export function CreateTaskPage({ navigation }: any) {
-    const { createTask } = useTaskContext();
-    const { labels } = useLabelContext();
 
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
-    const [labelId, setLabelId] = useState<string | null>(null);
-    const [error, setError] = useState("");
+type CreateTaskPageProps = NativeStackScreenProps<AppStackParamList, "CreateTask"> | NativeStackScreenProps<AppStackParamList, "EditTask">;
 
-    const handleSave = async () => {
-        if (!name.trim()) {
-            setError("Título é obrigatório!");
-            return;
-        }
-        if (endDate && endDate < startDate) {
-            setError("Data de fim não pode ser anterior à data de início!");
-            return;
-        }
+export function CreateTaskPage({ navigation, route }: CreateTaskPageProps) {
+  const { createTask, updateTask } = useTaskContext();
+  const { labels } = useLabelContext();
 
-        await createTask({
-            name,
-            description,
-            startDate,
-            endDate: endDate || null,
-            labelId,
-            completed: false,
-            favorite: false,
-        });
+  const taskToEdit = (route.params as { task?: TaskType })?.task;
+  const isEditing = !!taskToEdit;
 
-        navigation.goBack();
-    };
+  const [name, setName] = useState(taskToEdit?.name || "");
+  const [description, setDescription] = useState(taskToEdit?.description || "");
+  const [startDate, setStartDate] = useState(taskToEdit?.startDate || "");
+  const [endDate, setEndDate] = useState(taskToEdit?.endDate || "");
+  const [labelId, setLabelId] = useState<string | null>(taskToEdit?.labelId || null);
+  const [error, setError] = useState("");
 
-    return (
-        <View style={{ flex: 1, padding: 16 }}>
-            <Text>Nova Tarefa</Text>
+  const handleSave = async () => {
+    if (!name.trim()) {
+      setError("O título da tarefa é obrigatório!");
+      return;
+    }
+    if (endDate && endDate < startDate) {
+      setError("A data de fim não pode ser anterior à data de início!");
+      return;
+    }
 
-            {error ? <Text style={{ color: "red" }}>{error}</Text> : null}
+    if (isEditing && taskToEdit) {
+      await updateTask(taskToEdit.id, {
+        name,
+        description,
+        startDate,
+        endDate: endDate || null,
+        labelId,
+      });
+    } else {
+      await createTask({
+        name,
+        description,
+        startDate,
+        endDate: endDate || null,
+        labelId,
+        completed: false,
+        favorite: false,
+      });
+    }
 
-            <Text>Título *</Text>
-            <TextInput
+    navigation.goBack();
+  };
+
+  return (
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
+      <Container>
+        <ScrollContainer>
+            <HeaderRow>
+            <Title>{isEditing ? "Editar Tarefa" : "Nova Tarefa"}</Title>
+            <CloseButton onPress={() => navigation.goBack()}>
+                <X size={20} color="#1A1A1A" />
+            </CloseButton>
+            </HeaderRow>
+
+            {error ? <ErrorText>{error}</ErrorText> : null}
+
+            <FormGroup>
+            <InputLabel>Title <RequiredMark>*</RequiredMark></InputLabel>
+            <StyledInput
                 value={name}
-                onChangeText={setName}
-                placeholder="Digite o título"
+                onChangeText={(text) => {
+                setName(text);
+                setError("");
+                }}
+                placeholder="Titulo da Atividade"
+                placeholderTextColor="#A0A0A0"
             />
+            </FormGroup>
 
-            <Text>Descrição</Text>
-            <TextInput
+            <FormGroup>
+            <InputLabel>Description</InputLabel>
+            <TextArea
                 value={description}
                 onChangeText={setDescription}
-                placeholder="Digite a descrição (opcional)"
+                placeholder="Detalhes da Atividade (Opicional)"
+                placeholderTextColor="#A0A0A0"
+                multiline
+                textAlignVertical="top"
             />
+            </FormGroup>
 
-            <Text>Data início</Text>
-            <TextInput
-                value={startDate}
-                onChangeText={setStartDate}
-                placeholder="YYYY-MM-DD"
-            />
-
-            <Text>Data fim (opcional)</Text>
-            <TextInput
-                value={endDate}
-                onChangeText={setEndDate}
-                placeholder="YYYY-MM-DD"
-            />
-
-            <Text>Label</Text>
-            {labels.map(label => (
-                <Button
-                    key={label.id}
-                    title={labelId === label.id ? `✅ ${label.name}` : label.name}
-                    onPress={() => setLabelId(label.id)}
+            <FormGroup>
+                <InputLabel>Data</InputLabel>
+                <DateRangePicker
+                    startDate={startDate}
+                    endDate={endDate}
+                    onChangeStart={setStartDate}
+                    onChangeEnd={setEndDate}
                 />
-            ))}
+            </FormGroup>
 
-            <Button title="Salvar" onPress={handleSave} />
-            <Button title="Cancelar" onPress={() => navigation.goBack()} />
-        </View>
-    );
+            <FormGroup>
+            <InputLabel>Categorias</InputLabel>
+            <LabelScroll horizontal showsHorizontalScrollIndicator={false}>
+                {labels.map((label) => {
+                const isSelected = labelId === label.id;
+                return (
+                    <LabelChip
+                    key={label.id}
+                    isSelected={isSelected}
+                    onPress={() => setLabelId(isSelected ? null : label.id)}
+                    >
+                    <Tag size={16} color={isSelected ? "#FFFFFF" : "#666666"} />
+                    <LabelChipText isSelected={isSelected}>
+                        {label.name}
+                    </LabelChipText>
+                    </LabelChip>
+                );
+                })}
+            </LabelScroll>
+            </FormGroup>
+
+            <SubmitButton onPress={handleSave}>
+            <SubmitButtonText>
+                {isEditing ? "Salvar Alterações" : "Criar Atividade"}
+            </SubmitButtonText>
+            </SubmitButton>
+        </ScrollContainer>
+      </Container>
+    </KeyboardAvoidingView>
+  );
 }
