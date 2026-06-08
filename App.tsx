@@ -13,5 +13,6 @@ export default function App() {
         <Routes/>
       </ThemeProvider>
     </SafeAreaProvider>
+
   )
 }

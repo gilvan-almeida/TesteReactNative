@@ -1,65 +1,98 @@
-import React from "react";
+import React, { useState } from "react";
+import { Modal, FlatList } from "react-native";
 import { useTheme } from "styled-components/native";
 import { TaskType } from "../../types/TaskTypes";
 import { useTaskContext, useLabelContext } from "../../context/TaskContext";
-import { Circle, CheckCircle2, Star } from "lucide-react-native";
+import { Circle, CheckCircle2, Star, Tag } from "lucide-react-native";
 
-import { CardContainer, LeftContent, CheckButton, TextContainer, TaskTitle, TaskDescription, FooterRow, TaskDate, LabelBadge, LabelText,FavoriteButton } from "./style";
+import {
+  CardContainer, LeftContent, CheckButton, TextContainer, TaskTitle,
+  TaskDescription, FooterRow, TaskDate, LabelBadge, LabelText, FavoriteButton,
+  ModalOverlay, ModalBox, ModalTitle, ModalItem, ModalItemText, ModalClose,
+} from "./style";
 
 interface TaskCardProps {
   task: TaskType;
   onPress?: () => void;
 }
 
-
 export function TaskCard({ task, onPress }: TaskCardProps) {
   const theme = useTheme();
-  const { completedTask, favoritedTask } = useTaskContext();
+  const { completedTask, favoritedTask, moveLabelTask } = useTaskContext();
   const { labels } = useLabelContext();
+  const [showLabelModal, setShowLabelModal] = useState(false);
 
   const label = labels.find((l) => l.id === task.labelId);
 
+  const handleMoveLabel = async (labelId: string) => {
+    await moveLabelTask(task.id, labelId);
+    setShowLabelModal(false);
+  };
+
   return (
-    <CardContainer onPress={onPress}>
+    <>
+      <CardContainer onPress={onPress} onLongPress={() => setShowLabelModal(true)}>
         <LeftContent>
-            <CheckButton onPress={() => completedTask(task.id)}>
-                {task.completed ? (
-                    <CheckCircle2 size={24} color={theme.colors.success} fill={theme.colors.success} />
-                ) : (
-                    <Circle size={24} color={theme.colors.border} />
-                )}
-            </CheckButton>
-
-            <TextContainer>
-            <TaskTitle isCompleted={task.completed}>{task.name}</TaskTitle>
-            
-            {task.description && (
-                <TaskDescription numberOfLines={1}>{task.description}</TaskDescription>
+          <CheckButton onPress={() => completedTask(task.id)}>
+            {task.completed ? (
+              <CheckCircle2 size={24} color={theme.colors.success} fill={theme.colors.success} />
+            ) : (
+              <Circle size={24} color={theme.colors.border} />
             )}
+          </CheckButton>
 
+          <TextContainer>
+            <TaskTitle isCompleted={task.completed}>{task.name}</TaskTitle>
+            {task.description && (
+              <TaskDescription numberOfLines={1}>{task.description}</TaskDescription>
+            )}
             <FooterRow>
-                <TaskDate>
-                {task.endDate
-                    ? `${task.startDate} - ${task.endDate}`
-                    : task.startDate}
-                </TaskDate>
-
-                {label && (
+              <TaskDate>
+                {task.endDate ? `${task.startDate} → ${task.endDate}` : task.startDate}
+              </TaskDate>
+              {label && (
                 <LabelBadge color={label.color}>
-                    <LabelText color={label.color}>{label.name}</LabelText>
+                  <LabelText color={label.color}>{label.name}</LabelText>
                 </LabelBadge>
-                )}
+              )}
             </FooterRow>
-            </TextContainer>
+          </TextContainer>
         </LeftContent>
 
         <FavoriteButton onPress={() => favoritedTask(task.id)}>
-            <Star
-                size={24}
-                color={task.favorite ? "#FFCC00" : theme.colors.textLight}
-                fill={task.favorite ? "#FFCC00" : "transparent"}
-            />
+          <Star
+            size={24}
+            color={task.favorite ? "#FFCC00" : theme.colors.textLight}
+            fill={task.favorite ? "#FFCC00" : "transparent"}
+          />
         </FavoriteButton>
-    </CardContainer>
+      </CardContainer>
+
+      <Modal visible={showLabelModal} transparent animationType="fade">
+        <ModalOverlay onPress={() => setShowLabelModal(false)}>
+          <ModalBox>
+            <ModalTitle>Mover para categoria</ModalTitle>
+            <FlatList
+              data={labels}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <ModalItem
+                  onPress={() => handleMoveLabel(item.id)}
+                  isSelected={task.labelId === item.id}
+                >
+                  <Tag size={16} color={item.color} />
+                  <ModalItemText isSelected={task.labelId === item.id}>
+                    {item.name}
+                  </ModalItemText>
+                </ModalItem>
+              )}
+            />
+            <ModalClose onPress={() => setShowLabelModal(false)}>
+              <ModalItemText isSelected={false}>Cancelar</ModalItemText>
+            </ModalClose>
+          </ModalBox>
+        </ModalOverlay>
+      </Modal>
+    </>
   );
 }
