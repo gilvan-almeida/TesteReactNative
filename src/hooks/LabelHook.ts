@@ -9,26 +9,29 @@ export function useLabel(){
     const [labels, setLabels] = useState<LabelType[]>([]);
 
     useEffect(() =>{
-        const verifyLabel = LabelService.getLabel();
-        if(verifyLabel.length === 0){
-            LabelService.setLabel(DEFAULT_LABEL);
-            setLabels(DEFAULT_LABEL);
-        }else{
-            setLabels(verifyLabel)
-        }
+        const loadLabels = async () => {
+            const saved = await LabelService.getLabel();
+            if(saved.length === 0){
+                await LabelService.setLabel(DEFAULT_LABEL);
+                setLabels(DEFAULT_LABEL);
+            }else{
+                setLabels(saved);
+            }
+        };
+        loadLabels();
     },[]);
 
-    const createLabel = useCallback((date: CreatedLabel) =>{
+    const createLabel = useCallback(async (date: CreatedLabel) =>{
         const newLabel: LabelType = {
             id: randomUUID(),
             ...date,
         };
         const updateNewLabel = [...labels, newLabel];
         setLabels(updateNewLabel);
-        LabelService.setLabel(updateNewLabel);
+        await LabelService.setLabel(updateNewLabel);
     },[labels]);
 
-    const updateLabel = useCallback((id: string, date: Partial<CreatedLabel>)=>{
+    const updateLabel = useCallback(async (id: string, date: Partial<CreatedLabel>)=>{
         const update = labels.map((label) =>{
             if(label.id === id){
                 return { ...label, ...date}
@@ -36,18 +39,18 @@ export function useLabel(){
             return label
         })
         setLabels(update);
-        LabelService.setLabel(update);
+        await LabelService.setLabel(update);
     },[labels]);
 
-    const deleteLabel = useCallback((id: string) =>{
+    const deleteLabel = useCallback(async(id: string) =>{
         const verifyLabel = labels.filter((label) => label.id !== id);
         setLabels(verifyLabel);
-        LabelService.setLabel(verifyLabel);
+        await LabelService.setLabel(verifyLabel);
 
     },[labels]);
 
     const contTaskLabel = useCallback((labelId: string, tasks: TaskType[]) => {
-        return tasks.filter((task) => task.labelId === labelId),length;
+        return tasks.filter((task) => task.labelId === labelId).length;
     },[])
 
     return {labels, createLabel, updateLabel, deleteLabel, contTaskLabel}

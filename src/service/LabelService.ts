@@ -1,24 +1,25 @@
 import { LabelType } from "../types/LabelTypes";
-import { storage, KEYS_STORAGE } from "../database/Storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { KEYS_STORAGE } from "../database/Storage";
 
 export const LabelService = {
 
-    getLabel(): LabelType[] {
+    async getLabel(): Promise<LabelType[]>{
         try{
-            const date = storage.getString(KEYS_STORAGE.labels);
+            const date = await AsyncStorage.getItem(KEYS_STORAGE.labels);
             return date ? JSON.parse(date): [];
         } catch{
             return [];
         }
     },
-    setLabel(label: LabelType[]): void{
+    async setLabel(label: LabelType[]): Promise<void>{
         try{
-            storage.set(KEYS_STORAGE.labels, JSON.stringify(label))
+            await AsyncStorage.setItem(KEYS_STORAGE.labels, JSON.stringify(label))
         }catch(e){
             console.error("Error ao salvar Label", e)
         }
     },
-    resetAllLabel():void{
-        storage.delete(KEYS_STORAGE.labels)
+    async resetAllLabel(): Promise<void>{
+        await AsyncStorage.removeItem(KEYS_STORAGE.labels)
     }
 }

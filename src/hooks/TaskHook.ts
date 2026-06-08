@@ -10,11 +10,14 @@ export function useTask(){
     const [selectLabel, setSelectLabel] = useState<string | null>(null);
 
     useEffect(()=>{
-        const saved = TaskService.getTask();
-        setTask(saved);
+        const loadTasks = async () => {
+            const saved = await TaskService.getTask();
+            setTask(saved);
+        };
+        loadTasks();
     },[]);
 
-    const createTask = useCallback((date: CreatedTask) => {
+    const createTask = useCallback(async (date: CreatedTask) => {
         const newTask: TaskType = {
             id: randomUUID(),
             createdAd: new Date().toISOString(),
@@ -22,10 +25,10 @@ export function useTask(){
         };
         const updateNewTask = [...tasks, newTask];
         setTask(updateNewTask)
-        TaskService.setTask(updateNewTask);
+        await TaskService.setTask(updateNewTask);
     },[tasks]);
 
-    const updateTask = useCallback((id: string, date: Partial<CreatedTask>)=>{
+    const updateTask = useCallback(async (id: string, date: Partial<CreatedTask>)=>{
         const updateTask = tasks.map((task) => {
             if(task.id === id){
                 return {...task, ...date}
@@ -34,19 +37,19 @@ export function useTask(){
             }
         });
         setTask(updateTask)
-        TaskService.setTask(updateTask);
+        await TaskService.setTask(updateTask);
     },[tasks]);
 
-    const deleteTask = useCallback((id: string) =>{
+    const deleteTask = useCallback(async (id: string) =>{
         const verifyTask = tasks.filter((task) =>{
             task.id !== id
         });
         setTask(verifyTask);
-        TaskService.setTask(verifyTask);
+        await TaskService.setTask(verifyTask);
     },[tasks]);
 
-    const completedTask = useCallback((id: string) => {
-        const verifyTask = tasks.map((task) =>{
+    const completedTask = useCallback(async (id: string) => {
+        const verifyTask = tasks.filter((task) =>{
             if(task.id === id){
                 return {...task, completed: !task.completed}
             }else{
@@ -54,10 +57,10 @@ export function useTask(){
             }
         });
         setTask(verifyTask);
-        TaskService.setTask(verifyTask);
+        await TaskService.setTask(verifyTask);
     }, [tasks]);
 
-    const favoritedTask = useCallback((id: string) =>{
+    const favoritedTask = useCallback(async (id: string) =>{
         const verifyTask = tasks.map((task) => {
             if(task.id === id){
                 return {...task, favorite: !task.favorite}
@@ -66,11 +69,11 @@ export function useTask(){
             }
         })
         setTask(verifyTask);
-        TaskService.setTask(verifyTask);
+        await TaskService.setTask(verifyTask);
     },[tasks]);
 
 
-    const moveLabelTask = useCallback((id: string, labelId: string) => {
+    const moveLabelTask = useCallback(async (id: string, labelId: string) => {
         const verifyTask = tasks.map((task) =>{
             if(task.id === id){
                 return {...task, labelId}
@@ -79,11 +82,11 @@ export function useTask(){
             }
         });
         setTask(verifyTask);
-        TaskService.setTask(verifyTask);
+        await TaskService.setTask(verifyTask);
     },[tasks]);
 
 
-    const clearLabelTask = useCallback((labelId: string) =>{
+    const clearLabelTask = useCallback(async (labelId: string) =>{
         const verifyTask = tasks.map((task) => {
             if(task.labelId === labelId){
                 return {...task, labelId: null}
@@ -92,7 +95,7 @@ export function useTask(){
             }
         });
         setTask(verifyTask);
-        TaskService.setTask(verifyTask);
+        await TaskService.setTask(verifyTask);
     },[tasks]);
 
 
@@ -117,6 +120,7 @@ export function useTask(){
                 break
             case "completed":
                 result = result.filter((task) => task.completed);
+                break;
             case "label":
                 result = result.filter((task) => task.labelId === selectLabel);
                 break
