@@ -1,30 +1,42 @@
-import { Text, View, Button } from "react-native";
+import React from "react";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useTheme } from "styled-components/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { AuthListProps } from "../../types/NavigationType";
 import { useAuthPin } from "../../hooks/AuthPinHook";
 import { PinInput } from "../../components/PinInput";
 
+import { Title, Subtitle, SecondaryButton, SecondaryButtonText } from "../../styles/global";
+
+import { Box, TopContainer, MiddleContainer, ErrorText,BottomContainer } from "./style";
+
 type PasswordProps = NativeStackScreenProps<AuthListProps, "PasswordPage"> & {
   onLogin: () => void;
 };
 
-export function PasswordPage({onLogin, navigation}: PasswordProps){
-    const { passwordPin, error, verifyHandleDigit} = useAuthPin({
-        onSuccess: onLogin,
-    });
+export function PasswordPage({ onLogin, navigation }: PasswordProps) {
+  const theme = useTheme();
+  const { passwordPin, error, verifyHandleDigit } = useAuthPin({
+    onSuccess: onLogin,
+  });
 
-    return (
-        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-            <Text>Digite seu PIN</Text>
+  return (
+    <Box>
+      <TopContainer>
+        <Title>TaskFlow</Title>
+        <Subtitle>Digite seu PIN para continuar</Subtitle>
+      </TopContainer>
+      <MiddleContainer>
+        <PinInput pin={passwordPin} onChangePin={verifyHandleDigit} />
+    
+        {error && <ErrorText>PIN incorreto!</ErrorText>}
+      </MiddleContainer>
 
-            <PinInput pin={passwordPin} onChangePin={verifyHandleDigit  } />
-
-            {error && <Text style={{ color: "red" }}>PIN incorreto!</Text>}
-
-            <Button
-                title="Usar Biometria"
-                onPress={() => navigation.navigate("LockPage")}
-            />
-        </View>
-    );
+      <BottomContainer>
+        <SecondaryButton onPress={() => navigation.navigate("LockPage")}>
+          <SecondaryButtonText>Usar Biometria</SecondaryButtonText>
+        </SecondaryButton>
+      </BottomContainer>
+    </Box>
+  );
 }
