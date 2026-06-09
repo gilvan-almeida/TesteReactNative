@@ -224,5 +224,10 @@ eas build -p android --profile preview
 ```
 
 ---
+## Como Instalar e Testar o Aplicativo (Android)
+
+-Fazer Download do APK:** Acesse a aba Releases
+-Permissão de Fontes Desconhecidas:Ao clicar no arquivo para instalar, o Android poderá solicitar uma permissão de segurança.
+-Aceite de fontes Desconhecidas, clique em *Instalar* e o aplicativo estará pronto!
 
 
