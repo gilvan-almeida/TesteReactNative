@@ -1,12 +1,19 @@
-# TaskFlow 📋
+# TaskFlow 
 
 App de gerenciamento de tarefas (TODO) desenvolvido com React Native + Expo Bare Workflow como teste técnico para vaga de Estagiário.
 
 ---
 
-## 📱 Screenshots
+## Screenshots
 
-
+Tela inicial
+<img width="300" height="720" alt="LockPage" src="https://github.com/user-attachments/assets/d36a66c9-f161-488e-9813-6d2839c78dfc" />
+Inicio do app
+<img width="300" height="720" alt="BemVindo" src="https://github.com/user-attachments/assets/ef0889e3-f5f9-4b84-9573-1ea0baec199b" />
+Pagina de Favoritos
+<img width="300" height="720" alt="Fav" src="https://github.com/user-attachments/assets/ef33547f-0628-405b-9cf2-d42547a95101" />
+Pagina de Categorias
+<img width="300" height="720" alt="Label" src="https://github.com/user-attachments/assets/efa8504a-47a5-4b4d-a6b8-163591277654" />
 
 ---
 
@@ -16,22 +23,40 @@ App de gerenciamento de tarefas (TODO) desenvolvido com React Native + Expo Bare
 
 - Node.js 18+
 - Android Studio + Android SDK
+- Variável de ambiente `ANDROID_HOME` configurada
+- Na pasta `android/` do projeto, crie o arquivo `local.properties` com o caminho do seu SDK:
 - JDK 17
 - Expo CLI
+  
+```properties
+# Windows
+sdk.dir=C:\\Users\\SeuUsuario\\AppData\\Local\\Android\\Sdk
+
+```
 
 ### Instalação
 
 ```bash
 # Clone o repositório
-git clone https://github.com/seu-usuario/todo-app-rn.git
-cd todo-app-rn
+git clone https://github.com/gilvan-almeida/TesteReactNative
+cd TesteReactNative
 
 # Instale as dependências
 npm install
 
+#
+
 # Rode no Android
 npx expo run:android
 ```
+
+### Dispositivo físico (recomendado para biometria)
+Para testar a autenticação biométrica é necessário um dispositivo físico com:
+- **Depuração USB habilitada** — Configurações → Sobre o telefone → toque 7x em "Número da versão" → Configurações do desenvolvedor → Depuração USB
+- Biometria cadastrada no dispositivo
+
+> Testado em **Samsung Galaxy A07 — Android 13**
+
 
 ### Verificar TypeScript
 
@@ -65,7 +90,7 @@ npx tsc --noEmit
 
 ---
 
-## 🏗️ Arquitetura e Decisões
+##  Arquitetura e Decisões
 
 ### Estrutura de pastas
 
@@ -171,7 +196,7 @@ As labels padrão (Pessoal, Trabalho, Estudos) usam IDs fixos ao invés de `rand
 
 ---
 
-## ⚠️ Observações
+##  Observações
 
 ### Biometria no emulador
 A biometria não funciona em emuladores Android sem configuração especial. Para testar:
@@ -185,7 +210,7 @@ As animações de swipe (A-01), favoritar com spring (A-02), checkbox com fade (
 
 ---
 
-## 📦 Gerando o APK
+##  Gerando o APK
 
 ```bash
 # Via EAS Build (recomendado)
