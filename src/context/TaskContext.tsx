@@ -1,6 +1,7 @@
 import React, { createContext, useContext } from "react";
 import { useTask } from "../hooks/TaskHook";
 import { useLabel } from "../hooks/LabelHook";
+import { ErrorPage } from "../pages/ErrorPage";
 
 type TaskContextType = ReturnType<typeof useTask>;
 type LabelContextTyoe = ReturnType<typeof useLabel>;
@@ -16,11 +17,19 @@ export function useLabelContext(){
     return useContext(LabelContext);
 }
 
-export function AppProvider({children}: {children: React.ReactNode}){
+export function AppProvider({children, onReset}: {children: React.ReactNode, onReset: () => void}){
     const valueTask = useTask();
     const valueLabel = useLabel();
 
-    return(
+    const hasStorageError = valueTask.storageError || valueLabel.storageError;
+
+    if (hasStorageError) {
+        return (
+            <ErrorPage onReset={onReset} />
+        );
+    }
+
+    return( 
         <TaskContext.Provider value={valueTask}>
             <LabelContext.Provider value={valueLabel}>
                 {children}

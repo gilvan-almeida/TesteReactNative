@@ -23,7 +23,7 @@ export function PasswordPage({ onLogin, navigation }: PasswordProps) {
   return (
     <Box>
       <TopContainer>
-        <Title>TaskFlow</Title>
+        <Title>Atividades</Title>
         <Subtitle>Digite seu PIN para continuar</Subtitle>
       </TopContainer>
       <MiddleContainer>

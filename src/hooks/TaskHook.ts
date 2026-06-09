@@ -8,106 +8,135 @@ export function useTask(){
     const [filter, setFilter] = useState<FilterType>("all");
     const [order, setOrder] = useState<OrderTaskType>("createdAd")
     const [selectLabel, setSelectLabel] = useState<string | null>(null);
+    const [storageError, setStorageError] = useState(false);    
 
     useEffect(()=>{
         const loadTasks = async () => {
-            const saved = await TaskService.getTask();
-            setTask(saved);
+            try {
+                const saved = await TaskService.getTask();
+                setTask(saved);
+            } catch (error) {
+                setStorageError(true);
+            }
         };
         loadTasks();
     },[]);
 
     const createTask = useCallback(async (date: CreatedTask) => {
-        const newTask: TaskType = {
-            id: randomUUID(),
-            createdAd: new Date().toISOString(),
-            ...date
-        };
-        const updateNewTask = [...tasks, newTask];
-        setTask(updateNewTask)
-        await TaskService.setTask(updateNewTask);
+        try {
+            const newTask: TaskType = {
+                id: randomUUID(),
+                createdAd: new Date().toISOString(),
+                ...date
+            };
+            const updateNewTask = [...tasks, newTask];
+            setTask(updateNewTask)
+            await TaskService.setTask(updateNewTask);
+        } catch (error) {
+            setStorageError(true);
+        }
     },[tasks]);
 
     const updateTask = useCallback(async (id: string, date: Partial<CreatedTask>)=>{
-        const updateTask = tasks.map((task) => {
-            if(task.id === id){
-                return {...task, ...date}
-            }else{
-                return task
-            }
-        });
-        setTask(updateTask)
-        await TaskService.setTask(updateTask);
+        try {
+            const updateTask = tasks.map((task) => {
+                if(task.id === id){
+                    return {...task, ...date}
+                }else{
+                    return task
+                }
+            });
+            setTask(updateTask)
+            await TaskService.setTask(updateTask);
+        } catch (error) {
+            setStorageError(true);
+        }
     },[tasks]);
 
     const deleteTask = useCallback(async (id: string) =>{
-        const verifyTask = tasks.filter((task) =>{
-            task.id !== id
-        });
-        setTask(verifyTask);
-        await TaskService.setTask(verifyTask);
+        try {
+            const verifyTask = tasks.filter((task) => task.id !== id);
+            setTask(verifyTask);
+            await TaskService.setTask(verifyTask);
+        } catch (error) {
+            setStorageError(true);
+        }
     },[tasks]);
 
     const completedTask = useCallback(async (id: string) => {
-        const verifyTask = tasks.filter((task) =>{
-            if(task.id === id){
-                return {...task, completed: !task.completed}
-            }else{
-                return task
-            }
-        });
-        setTask(verifyTask);
-        await TaskService.setTask(verifyTask);
+        try {
+            const verifyTask = tasks.map((task) =>{
+                if(task.id === id){
+                    return {...task, completed: !task.completed}
+                }else{
+                    return task
+                }
+            });
+            setTask(verifyTask);
+            await TaskService.setTask(verifyTask);
+        } catch (error) {
+            setStorageError(true);
+        }
     }, [tasks]);
 
     const favoritedTask = useCallback(async (id: string) =>{
-        const verifyTask = tasks.map((task) => {
-            if(task.id === id){
-                return {...task, favorite: !task.favorite}
-            }else{
-                return task;
-            }
-        })
-        setTask(verifyTask);
-        await TaskService.setTask(verifyTask);
+        try {
+            const verifyTask = tasks.map((task) => {
+                if(task.id === id){
+                    return {...task, favorite: !task.favorite}
+                }else{
+                    return task;
+                }
+            })
+            setTask(verifyTask);
+            await TaskService.setTask(verifyTask);
+        } catch (error) {
+            setStorageError(true);
+        }
     },[tasks]);
 
 
     const moveLabelTask = useCallback(async (id: string, labelId: string) => {
-        const verifyTask = tasks.map((task) =>{
-            if(task.id === id){
-                return {...task, labelId}
-            }else{
-                return task;
-            }
-        });
-        setTask(verifyTask);
-        await TaskService.setTask(verifyTask);
+        try {
+            const verifyTask = tasks.map((task) =>{
+                if(task.id === id){
+                    return {...task, labelId}
+                }else{
+                    return task;
+                }
+            });
+            setTask(verifyTask);
+            await TaskService.setTask(verifyTask);
+        } catch (error) {
+            setStorageError(true);
+        }
     },[tasks]);
 
 
     const clearLabelTask = useCallback(async (labelId: string) =>{
-        const verifyTask = tasks.map((task) => {
-            if(task.labelId === labelId){
-                return {...task, labelId: null}
-            }else{
-                return task;
-            }
-        });
-        setTask(verifyTask);
-        await TaskService.setTask(verifyTask);
+        try {
+            const verifyTask = tasks.map((task) => {
+                if(task.labelId === labelId){
+                    return {...task, labelId: null}
+                }else{
+                    return task;
+                }
+            });
+            setTask(verifyTask);
+            await TaskService.setTask(verifyTask);
+        } catch (error) {
+            setStorageError(true);
+        }
     },[tasks]);
 
 
     const filterLabel = useCallback((labelId: string) => {
         setSelectLabel(labelId);
         setFilter("label");
-    },[])
+    },[setSelectLabel, setFilter])
 
     const filteredTasks = useCallback(() => {
         const dateDay = new Date().toISOString().split("T")[0];
-        //remover
-        console.log(dateDay);
 
         let result = [...tasks];
 
@@ -141,13 +170,7 @@ export function useTask(){
         }
 
         return result
-    },[tasks, filter, order])
+    },[tasks, filter, order, selectLabel])
     
-    return { tasks: filteredTasks(), createTask, updateTask, deleteTask, completedTask, favoritedTask, moveLabelTask, clearLabelTask, filter, setFilter, order, setOrder, filterLabel, selectLabel }
-
-
-
-
-
-
+    return { tasks: filteredTasks(), createTask, updateTask, deleteTask, completedTask, favoritedTask, moveLabelTask, clearLabelTask, filter, setFilter, order, setOrder, filterLabel, selectLabel, storageError }
 }

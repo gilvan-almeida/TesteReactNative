@@ -7,51 +7,67 @@ import { TaskType } from "../types/TaskTypes";
 
 export function useLabel(){
     const [labels, setLabels] = useState<LabelType[]>([]);
+    const [storageError, setStorageError] = useState(false);
 
     useEffect(() =>{
         const loadLabels = async () => {
-            const saved = await LabelService.getLabel();
-            if(saved.length === 0){
-                await LabelService.setLabel(DEFAULT_LABEL);
-                setLabels(DEFAULT_LABEL);
-            }else{
-                setLabels(saved);
+            try {
+                const saved = await LabelService.getLabel();
+                if(saved.length === 0){
+                    await LabelService.setLabel(DEFAULT_LABEL);
+                    setLabels(DEFAULT_LABEL);
+                }else{
+                    setLabels(saved);
+                }
+            } catch (error) {
+                setStorageError(true);
             }
         };
         loadLabels();
     },[]);
 
     const createLabel = useCallback(async (date: CreatedLabel) =>{
-        const newLabel: LabelType = {
-            id: randomUUID(),
-            ...date,
-        };
-        const updateNewLabel = [...labels, newLabel];
-        setLabels(updateNewLabel);
-        await LabelService.setLabel(updateNewLabel);
+        try {
+            const newLabel: LabelType = {
+                id: randomUUID(),
+                ...date,
+            };
+            const updateNewLabel = [...labels, newLabel];
+            setLabels(updateNewLabel);
+            await LabelService.setLabel(updateNewLabel);
+        } catch (error) {
+            setStorageError(true);
+        }
     },[labels]);
 
     const updateLabel = useCallback(async (id: string, date: Partial<CreatedLabel>)=>{
-        const update = labels.map((label) =>{
-            if(label.id === id){
-                return { ...label, ...date}
-            }
-            return label
-        })
-        setLabels(update);
-        await LabelService.setLabel(update);
+        try {
+            const update = labels.map((label) =>{
+                if(label.id === id){
+                    return { ...label, ...date}
+                }
+                return label
+            })
+            setLabels(update);
+            await LabelService.setLabel(update);
+        } catch (error) {
+            setStorageError(true);
+        }
     },[labels]);
 
     const deleteLabel = useCallback(async(id: string) =>{
-        const verifyLabel = labels.filter((label) => label.id !== id);
-        setLabels(verifyLabel);
-        await LabelService.setLabel(verifyLabel);
-
+        try {
+            const verifyLabel = labels.filter((label) => label.id !== id);
+            setLabels(verifyLabel);
+            await LabelService.setLabel(verifyLabel);
+        } catch (error) {
+            setStorageError(true);
+        }
     },[labels]);
 
     const contTaskLabel = useCallback((labelId: string, tasks: TaskType[]) => {
         return tasks.filter((task) => task.labelId === labelId).length;
     },[])
 
-    return {labels, createLabel, updateLabel, deleteLabel, contTaskLabel}
+    return {labels, createLabel, updateLabel, deleteLabel, contTaskLabel, storageError}
 }
