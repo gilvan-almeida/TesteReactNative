@@ -199,10 +199,18 @@ A biometria não funciona em emuladores Android sem configuração especial. Par
 1. No emulador: **Settings → Security → Fingerprint** e configure uma digital virtual
 2. Ou use um dispositivo físico — recomendado para testar o fluxo completo
 
-O fallback de PIN funciona normalmente em qualquer ambiente.
+O fallback de PIN funciona normalmente em qualquer ambiente senha "1234".
 
 ### Animações
 As animações de swipe (A-01), favoritar com spring (A-02), checkbox com fade (A-03), entrada/saída de itens (A-04/A-05) e transição de label (A-06) não foram implementadas com Reanimated 3 para evitar conflitos com os gestos nativos do `TouchableOpacity` (long-press para mover label). A animação de autenticação (A-07) foi implementada com a Animated API.
+
+##  Aviso sobre TypeScript
+
+O projeto apresenta erros de tipo relacionados ao `styled-components` 
+com a declaração do `DefaultTheme`. O app funciona normalmente em runtime.
+Este é um problema de compatibilidade entre 
+`styled-components/native` e o TypeScript strict mode no Expo Bare que não consegui resolver.
+
 
 ---
 
