@@ -206,6 +206,13 @@ As animações de swipe (A-01), favoritar com spring (A-02), checkbox com fade (
 
 ---
 
+##  Aviso sobre TypeScript
+
+O projeto apresenta erros de tipo relacionados ao `styled-components` 
+com a declaração do `DefaultTheme`. O app funciona normalmente em runtime.
+Este é um problema  de compatibilidade entre 
+`styled-components/native` e o TypeScript strict mode no Expo Bare que não consegui resolver.
+
 ##  Gerando o APK
 
 ```bash
