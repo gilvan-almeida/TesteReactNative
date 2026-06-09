@@ -130,3 +130,9 @@ export const ModalClose = styled.TouchableOpacity`
     border-top-width: 1px;
     border-top-color: ${({ theme }) => theme.colors.border};
 `;
+
+export const DeleteButton = styled.TouchableOpacity`
+    padding: ${({ theme }) => theme.spacing.xs};
+    justify-content: center;
+    align-items: center;
+`;

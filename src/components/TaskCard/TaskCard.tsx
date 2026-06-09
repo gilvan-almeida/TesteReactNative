@@ -1,14 +1,16 @@
 import React, { useState } from "react";
-import { Modal, FlatList } from "react-native";
+import { Modal, FlatList, Alert } from "react-native";
 import { useTheme } from "styled-components/native";
 import { TaskType } from "../../types/TaskTypes";
 import { useTaskContext, useLabelContext } from "../../context/TaskContext";
-import { Circle, CheckCircle2, Star, Tag } from "lucide-react-native";
+import { Circle, CheckCircle2, Star, Tag, Trash2 } from "lucide-react-native";
+import { formatDate } from "../../utils/formatDate";
 
 import {
   CardContainer, LeftContent, CheckButton, TextContainer, TaskTitle,
   TaskDescription, FooterRow, TaskDate, LabelBadge, LabelText, FavoriteButton,
   ModalOverlay, ModalBox, ModalTitle, ModalItem, ModalItemText, ModalClose,
+  DeleteButton,
 } from "./style";
 
 interface TaskCardProps {
@@ -18,11 +20,26 @@ interface TaskCardProps {
 
 export function TaskCard({ task, onPress }: TaskCardProps) {
   const theme = useTheme();
-  const { completedTask, favoritedTask, moveLabelTask } = useTaskContext();
+  const { completedTask, favoritedTask, moveLabelTask, deleteTask } = useTaskContext();
   const { labels } = useLabelContext();
   const [showLabelModal, setShowLabelModal] = useState(false);
 
   const label = labels.find((l) => l.id === task.labelId);
+
+  const handleDelete = () => {
+    Alert.alert(
+      "Excluir tarefa",
+      `"${task.name}" será removida permanentemente.`,
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Excluir",
+          style: "destructive",
+          onPress: async () => await deleteTask(task.id),
+        },
+      ]
+    );
+  };
 
   const handleMoveLabel = async (labelId: string) => {
     await moveLabelTask(task.id, labelId);
@@ -48,7 +65,10 @@ export function TaskCard({ task, onPress }: TaskCardProps) {
             )}
             <FooterRow>
               <TaskDate>
-                {task.endDate ? `${task.startDate} → ${task.endDate}` : task.startDate}
+                {task.endDate
+                    ? `${formatDate(task.startDate)} → ${formatDate(task.endDate)}`
+                    : formatDate(task.startDate)
+                }
               </TaskDate>
               {label && (
                 <LabelBadge color={label.color}>
@@ -66,6 +86,10 @@ export function TaskCard({ task, onPress }: TaskCardProps) {
             fill={task.favorite ? "#FFCC00" : "transparent"}
           />
         </FavoriteButton>
+
+        <DeleteButton onPress={handleDelete}>
+          <Trash2 size={20} color={theme.colors.error} />
+        </DeleteButton>
       </CardContainer>
 
       <Modal visible={showLabelModal} transparent animationType="fade">

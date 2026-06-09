@@ -1,9 +1,10 @@
+import React from "react"; 
 import { useTaskContext, useLabelContext } from "../../context/TaskContext";
-import { Wrapper, ChipScroll, FilterChip, FilterChipText } from "./style";
+import { Wrapper, ChipScroll, FilterChip, FilterChipText, OrderContainer } from "./style"; // Importe o OrderContainer aqui
 import { FIXED_FILTERS } from "../../config/LabelConfig";
 
 export function SelectBox() {
-    const { filter, setFilter, filterLabel, selectLabel } = useTaskContext();
+    const { filter, setFilter, filterLabel, selectLabel, order, setOrder } = useTaskContext();
     const { labels } = useLabelContext();
 
     return (
@@ -23,6 +24,7 @@ export function SelectBox() {
                         </FilterChip>
                     );
                 })}
+
                 {labels.map((label) => {
                     const isSelected = filter === "label" && selectLabel === label.id;
                     return (
@@ -39,6 +41,38 @@ export function SelectBox() {
                     );
                 })}
             </ChipScroll>
+
+            <OrderContainer>
+                <FilterChip 
+                    isSelected={order === "createdAd"} 
+                    onPress={() => setOrder("createdAd")}
+                    style={{ flex: 1, alignItems: 'center', marginRight: 8 }} 
+                >
+                    <FilterChipText isSelected={order === "createdAd"}>
+                        Recentes
+                    </FilterChipText>
+                </FilterChip>
+
+                <FilterChip 
+                    isSelected={order === "date"} 
+                    onPress={() => setOrder("date")}
+                    style={{ flex: 1, alignItems: 'center', marginRight: 8 }}
+                >
+                    <FilterChipText isSelected={order === "date"}>
+                        Por Prazo
+                    </FilterChipText>
+                </FilterChip>
+
+                <FilterChip 
+                    isSelected={order === "alphabetical"} 
+                    onPress={() => setOrder("alphabetical")}
+                    style={{ flex: 1, alignItems: 'center', marginRight: 0 }} 
+                >
+                    <FilterChipText isSelected={order === "alphabetical"}>
+                        Nome (A-Z)
+                    </FilterChipText>
+                </FilterChip>
+            </OrderContainer>
         </Wrapper>
     );
 }

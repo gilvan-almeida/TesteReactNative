@@ -23,32 +23,34 @@ type HomePageProps = BottomTabScreenProps<AppTabParamList, "Home"> & {
 
 export function HomePage({ navigation }: HomePageProps) {
     const theme = useTheme();
-    const { tasks, filter  } = useTaskContext(); 
+
+    const { tasks, filter } = useTaskContext(); 
 
     const [search, setSearch] = useState("");
 
     const pendingTasksCount = tasks.filter((task) => !task.completed).length;
 
-    const filteredBySearch = search.trim()
+    const finalTasksList = search.trim()
         ? tasks.filter((task) =>
             task.name.toLowerCase().includes(search.toLowerCase())
           )
         : tasks;
-        const getSubtitle = () => {
+
+    
+    const getSubtitle = () => {
         switch (filter) {
             case "today":
-                return `${filteredBySearch.length} tarefas para hoje`;
+                return `${finalTasksList.length} tarefas para hoje`;
             case "favorites":
-                return `${filteredBySearch.length} tarefas favoritas`;
+                return `${finalTasksList.length} tarefas favoritas`;
             case "completed":
-                return `${filteredBySearch.length} tarefas concluídas`;
+                return `${finalTasksList.length} tarefas concluídas`;
             case "label":
-                return `${filteredBySearch.length} tarefas nesta categoria`;
+                return `${finalTasksList.length} tarefas nesta categoria`;
             default:
                 return `Você tem ${pendingTasksCount} ${pendingTasksCount === 1 ? "atividade pendente" : "atividades pendentes"}`;
         }
     };
-
 
     return (
         <Container>
@@ -66,7 +68,7 @@ export function HomePage({ navigation }: HomePageProps) {
 
             <ListContainer>
                 <FlatList
-                    data={filteredBySearch}
+                    data={finalTasksList}
                     keyExtractor={(item) => item.id}
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ paddingBottom: 100 }}

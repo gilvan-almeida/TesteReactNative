@@ -32,3 +32,10 @@ export const FilterChipText = styled.Text<ChipProps>`
     color: ${({ theme, isSelected }) =>
         isSelected ? theme.colors.white : theme.colors.textLight};
 `;
+
+export const OrderContainer = styled.View`
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: ${({ theme }) => theme.spacing.sm};
+`;
