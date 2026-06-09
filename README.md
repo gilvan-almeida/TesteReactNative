@@ -6,13 +6,9 @@ App de gerenciamento de tarefas (TODO) desenvolvido com React Native + Expo Bare
 
 ## Screenshots
 
-Tela inicial
 <img width="300" height="720" alt="LockPage" src="https://github.com/user-attachments/assets/d36a66c9-f161-488e-9813-6d2839c78dfc" />
-Inicio do app
 <img width="300" height="720" alt="BemVindo" src="https://github.com/user-attachments/assets/ef0889e3-f5f9-4b84-9573-1ea0baec199b" />
-Pagina de Favoritos
 <img width="300" height="720" alt="Fav" src="https://github.com/user-attachments/assets/ef33547f-0628-405b-9cf2-d42547a95101" />
-Pagina de Categorias
 <img width="300" height="720" alt="Label" src="https://github.com/user-attachments/assets/efa8504a-47a5-4b4d-a6b8-163591277654" />
 
 ---
@@ -221,6 +217,4 @@ eas build -p android --profile preview
 
 ---
 
-## 👨‍💻 Autor
 
-Desenvolvido por **Gilvan** como teste técnico para vaga de Estagiário React Native.
